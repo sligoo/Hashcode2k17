@@ -39,8 +39,8 @@ class Video(object):
 
 
 class Request(object):
-    def __init__(self, time, video, endpoint):
-        self.time = time
+    def __init__(self, times, video, endpoint):
+        self.time = times
         self.video = video
         self.endpoint = endpoint
 
@@ -50,3 +50,18 @@ if __name__ == '__main__':
 
     line = input_file.pop(0)
     nbVideos, nbEndPoints, nbRequest, nbCache, capaCache = line.split(' ')
+
+
+
+
+    for endpoint in endpoints:
+        endpoint.requests.sort(key=lambda r : r.times)
+        endpoint.caches = OrderedDict(sorted(endpoint.caches.items(),
+                                                key=lambda c : c[1]))
+        request = endpoint.requests[1]
+        for cache in endpoint.caches:
+            if cache.capaDispo > request.video.size:
+                cache.videos.apped(request.video.id)
+                cache.capaDispo -= request.video.size
+                break
+
