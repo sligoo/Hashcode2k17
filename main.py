@@ -152,7 +152,7 @@ if __name__ == '__main__':
         #                caches_used.append(cache.id)
         #            break
 
-    with open("output.txt", 'w') as out_file:
+    with open(sys.argv[1][:-3] + "_output.txt", 'w') as out_file:
         out_file.write(str(len(caches_used)) + "\n")
         for cache_id in caches_used:
             out_file.write(str(caches[cache_id]) +"\n")
