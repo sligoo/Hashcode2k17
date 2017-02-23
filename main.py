@@ -1,7 +1,13 @@
-import networkx as nx
-import matplotlib.pyplot as plt
+import math
+import sys
 
-G = nx.Graph()
-G.add_edge(1,2)
-nx.draw(G)
-plt.show()
+
+class Cache(object):
+    def __init__(self, id, capaMax, capaDispo, endPoint, videos):
+        self.id = id
+        self.capaMax = capaMax
+        self.capaDispo = capaDispo
+        self.endPoint = endPoint
+        self.videos = videos
+
+class EndPoint(object):
