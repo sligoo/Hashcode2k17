@@ -13,6 +13,10 @@ class Cache(object):
         self.capaDispo = capaMax
         self.endPoints = endPoints
         self.videos = videos
+        self.used = False
+
+    def __str__(self):
+        return " ".join([str(self.id)].append(self.videos))
 
 
 class EndPoint(object):
@@ -32,20 +36,18 @@ class EndPoint(object):
 
         return score
 
-
 class Video(object):
     def __init__(self, id, size):
         self.id = id
         self.size = size
         self.prio = -1
 
-    def
-
 class Request(object):
     def __init__(self, times, video, endpoint):
         self.time = times
         self.video = video
         self.endpoint = endpoint
+
 
 if __name__ == '__main__':
     input_set = "me_at_the_zoo.in"
@@ -55,8 +57,7 @@ if __name__ == '__main__':
     nbVideos, nbEndPoints, nbRequest, nbCache, capaCache = line.split(' ')
 
 
-
-
+    caches_used = []
     for endpoint in endpoints:
         endpoint.requests.sort(key=lambda r : r.times)
         endpoint.caches = collections.OrderedDict(sorted(endpoint.caches.items(),
@@ -65,7 +66,14 @@ if __name__ == '__main__':
         for cache in endpoint.caches:
             if request.video not in cache.videos:
                 if cache.capaDispo > request.video.size:
-                    cache.videos.apped(request.video.id)
+                    cache.videos.append(request.video.id)
                     cache.capaDispo -= request.video.size
+                    if not cache.used:
+                        cache.used = true
+                        caches_used.append(cache.id)
                     break
 
+    with out_file as open("output.txt", 'r'):
+        out_file.write(str(caches_used.size) + "\n")
+        for cache_id in caches_used:
+            out_file.write(str(caches[cache_id]))
