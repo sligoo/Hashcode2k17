@@ -1,5 +1,6 @@
 import math
 import sys
+import collections
 
 def calculate_score(lat_data, lat_cache):
     return lat_data - lat_cache
@@ -36,7 +37,9 @@ class Video(object):
     def __init__(self, id, size):
         self.id = id
         self.size = size
+        self.prio = -1
 
+    def
 
 class Request(object):
     def __init__(self, times, video, endpoint):
@@ -56,7 +59,7 @@ if __name__ == '__main__':
 
     for endpoint in endpoints:
         endpoint.requests.sort(key=lambda r : r.times)
-        endpoint.caches = OrderedDict(sorted(endpoint.caches.items(),
+        endpoint.caches = collections.OrderedDict(sorted(endpoint.caches.items(),
                                                 key=lambda c : c[1]))
         request = endpoint.requests[1]
         for cache in endpoint.caches:
