@@ -49,4 +49,3 @@ if __name__ == '__main__':
 
     line = input_file.pop(0)
     nbVideos, nbEndPoints, nbRequest, nbCache, capaCache = line.split(' ')
->>>>>>> 63ae47b5c0e8a76ce849c6bbb8e9865b9db4c779
