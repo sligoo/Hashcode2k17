@@ -60,8 +60,9 @@ if __name__ == '__main__':
                                                 key=lambda c : c[1]))
         request = endpoint.requests[1]
         for cache in endpoint.caches:
-            if cache.capaDispo > request.video.size:
-                cache.videos.apped(request.video.id)
-                cache.capaDispo -= request.video.size
-                break
+            if request.video not in cache.videos:
+                if cache.capaDispo > request.video.size:
+                    cache.videos.apped(request.video.id)
+                    cache.capaDispo -= request.video.size
+                    break
 
