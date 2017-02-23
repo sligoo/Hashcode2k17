@@ -30,3 +30,10 @@ class Request(object):
         self.time = time
         self.video = video
         self.endpoint = endpoint
+
+if __name__ == '__main__':
+    input_set = "me_at_the_zoo.in"
+    input_file = open(input_set).readlines()
+
+    line = input_file.pop(0)
+    nbVideos, nbEndPoints, nbRequest, nbCache, capaCache = line.split(' ')
