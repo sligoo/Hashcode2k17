@@ -16,7 +16,10 @@ class Cache(object):
         self.used = False
 
     def __str__(self):
-        return " ".join([str(self.id)].append(self.videos))
+        s = []
+        s.append(str(self.id))
+        s.append(str(v) for v in self.videos)
+        return " ".join(s)
 
 
 class EndPoint(object):
