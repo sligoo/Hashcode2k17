@@ -79,19 +79,19 @@ if __name__ == '__main__':
     # Endpoint i
     for i in range(nbEndPoints):
         line = input_file.pop(0)
-        latency, nb_caches_endpoint = [int(i) for i in line.split(' ')]
+        latency, nb_caches_endpoint = (int(i) for i in line.split(' '))
         if not endpoints[i]:
             endpoints[i] = EndPoint(id=i, latency=latency, caches=[None for _ in range(nb_caches_endpoint)], requests=[])
 
         # Cache j
         for j in range(nb_caches_endpoint):
             line = input_file.pop(0)
-            cache_id, latency = [int(i) for i in line.split(' ')]
+            cache_id, latency = (int(i) for i in line.split(' '))
             print("cache id:", cache_id)
             if not caches[cache_id]:
                 caches[cache_id] = Cache(id=cache_id, capaMax=capaCache, endPoints=[])
                 caches[cache_id].capaDispo = capaCache
-            endpoints[i].caches[cache_id]
+            endpoints[i].caches[cache_id] = latency
 
     line = input_file.pop(0)
     # Request i
