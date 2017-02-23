@@ -9,7 +9,7 @@ def calculate_score(lat_data, lat_cache):
 
 
 class Cache(object):
-    def __init__(self, id, capaMax, endPoints, videos):
+    def __init__(self, id, capaMax, endPoints):
         self.id = id
         self.capaMax = capaMax
         self.capaDispo = capaMax
@@ -60,6 +60,10 @@ if __name__ == '__main__':
 
     line = input_file.pop(0)
     nbVideos, nbEndPoints, nbRequest, nbCache, capaCache = (int(i) for i in line.split(' '))
+    print("nbVideos = ", nbVideos)
+    print("nbEndPoints = ", nbEndPoints)
+    print("nbCache = ", nbCache)
+    print("capaCache = ", capaCache)
 
     videos = [None for i in range(nbVideos)]  # type: List(Video)
     endpoints = [None for i in range(nbEndPoints)]  # type: List(Endpoint)
@@ -72,35 +76,34 @@ if __name__ == '__main__':
         v = Video(id=i, size=int(video_sizes[i]))
         videos.append(v)
 
-    line = input_file.pop(0)
     # Endpoint i
     for i in range(nbEndPoints):
         line = input_file.pop(0)
-        latency, caches_endpoint = line.split(' ')
+        latency, nb_caches_endpoint = [int(i) for i in line.split(' ')]
         if not endpoints[i]:
-            endpoints[i] = EndPoint(id=i, latency=latency, caches=[None for _ in range(caches_endpoint)], requests=[])
+            endpoints[i] = EndPoint(id=i, latency=latency, caches=[None for _ in range(nb_caches_endpoint)], requests=[])
 
         # Cache j
-        for j in range(caches):
+        for j in range(nb_caches_endpoint):
             line = input_file.pop(0)
-            cache_id, latency = line.split(' ')
+            cache_id, latency = [int(i) for i in line.split(' ')]
+            print(cache_id)
             if not caches[cache_id]:
-                caches[cache_id] = Cache(id=cache_id, capaMax=capaCache, endPoints=[])
-                caches[cache_id].capaDispo = capaCache
-            caches[cache_id].endPoints.append(endpoints[i])
+                caches[cache_id] = Cache(id=cache_id, capaMax=capaCache, endPoints=[]), latency
+                caches[cache_id][0].capaDispo = capaCache
+        endpoint[i].caches[cache_id]
 
     line = input_file.pop(0)
     # Request i
     for i in range(nbRequest):
-        id_video, id_endpoint, number_requests = line.split(' ')
+        id_video, id_endpoint, number_requests = [int(i) for  i in line.split(' ')]
         request = Request(times=number_requests, video=videos[id_video], endpoint=endpoints[id_endpoint])
         endpoints[id_endpoint].requests.append(request)
 
     caches_used = []
     for endpoint in endpoints:
-        endpoint.requests.sort(key=lambda r : r.times)
-        endpoint.caches = collections.OrderedDict(sorted(endpoint.caches.items(),
-                                                key=lambda c : c[1]))
+        endpoint.requests.sort(key=lambda r: r.times)
+        endpoint.caches.sort(key=lambda c: c[1])
         request = endpoint.requests[1]
         for cache in endpoint.caches:
             if request.video not in cache.videos:
@@ -112,7 +115,7 @@ if __name__ == '__main__':
                         caches_used.append(cache.id)
                     break
 
-    with out_file as open("output.txt", 'r'):
+    with open("output.txt", 'w') as out_file:
         out_file.write(str(caches_used.size) + "\n")
         for cache_id in caches_used:
             out_file.write(str(caches[cache_id]))
