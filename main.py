@@ -1,5 +1,7 @@
 import math
 import sys
+from typing import List
+
 import collections
 
 def calculate_score(lat_data, lat_cache):
@@ -57,8 +59,42 @@ if __name__ == '__main__':
     input_file = open(input_set).readlines()
 
     line = input_file.pop(0)
-    nbVideos, nbEndPoints, nbRequest, nbCache, capaCache = line.split(' ')
+    nbVideos, nbEndPoints, nbRequest, nbCache, capaCache = (int(i) for i in line.split(' '))
 
+    videos = [None for i in range(nbVideos)]  # type: List(Video)
+    endpoints = [None for i in range(nbEndPoints)]  # type: List(Endpoint)
+    caches = [None for i in range(nbCache)]  # type: List(Cache)
+    requests = [None for i in range(nbRequest)]  # type: List(Request)
+
+    line = input_file.pop(0)
+    video_sizes = line.split(' ')
+    for i in range(nbVideos):
+        v = Video(id=i, size=int(video_sizes[i]))
+        videos.append(v)
+
+    line = input_file.pop(0)
+    # Endpoint i
+    for i in range(nbEndPoints):
+        line = input_file.pop(0)
+        latency, caches_endpoint = line.split(' ')
+        if not endpoints[i]:
+            endpoints[i] = EndPoint(id=i, latency=latency, caches=[None for _ in range(caches_endpoint)], requests=[])
+
+        # Cache j
+        for j in range(caches):
+            line = input_file.pop(0)
+            cache_id, latency = line.split(' ')
+            if not caches[cache_id]:
+                caches[cache_id] = Cache(id=cache_id, capaMax=capaCache, endPoints=[])
+                caches[cache_id].capaDispo = capaCache
+            caches[cache_id].endPoints.append(endpoints[i])
+
+    line = input_file.pop(0)
+    # Request i
+    for i in range(nbRequest):
+        id_video, id_endpoint, number_requests = line.split(' ')
+        request = Request(times=number_requests, video=videos[id_video], endpoint=endpoints[id_endpoint])
+        endpoints[id_endpoint].requests.append(request)
 
     caches_used = []
     for endpoint in endpoints:
