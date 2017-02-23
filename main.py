@@ -116,29 +116,38 @@ if __name__ == '__main__':
 
 
     caches_used = []
-    for endpoint in endpoints:
-        print("endpoint", endpoint.id)
-        endpoint.requests.sort(key=lambda r: r.times)
-        sorted_caches = []
-        for cache_id in endpoint.caches.keys():
-            sorted_caches.append((cache_id, endpoint.caches[cache_id]))
-        sorted_caches.sort(key=lambda couple: couple[1])
-        if endpoint.requests != []:
-            #print("endpoint has requests")
-            request = endpoint.requests[0]
+    caches_free = True
+    
+    caches_not_full = []
+    for cache in caches:
+        if cache.capaDispo > 0:
+            caches_not_full.append(cache)
+    while (len(caches_not_full) > 0) and caches_free:
+        caches_free = False
+        for endpoint in endpoints:
+            print("endpoint", endpoint.id)
+            endpoint.requests.sort(key=lambda r: r.times)
+            sorted_caches = []
             for cache_id in endpoint.caches.keys():
-                cache = caches[cache_id]
-                #print("cache", cache_id)
-                if request.video.id not in cache.videos:
-                    #print("video not yet in cache")
-                    if cache.capaDispo > request.video.size:
-                        cache.videos.append(request.video.id)
-                        cache.capaDispo -= request.video.size
-                        if not cache.used:
-                            cache.used = True
-                            caches_used.append(cache.id)
-                            #print("cache", cache.id, "is storing video", request.video.id)
-                        break
+                sorted_caches.append((cache_id, endpoint.caches[cache_id]))
+            sorted_caches.sort(key=lambda couple: couple[1])
+            if endpoint.requests != []:
+                #print("endpoint has requests")
+                request = endpoint.requests.pop(0)
+                for cache_id in endpoint.caches.keys():
+                    cache = caches[cache_id]
+                    #print("cache", cache_id)
+                    if request.video.id not in cache.videos:
+                        #print("video not yet in cache")
+                        if cache.capaDispo > request.video.size:
+                            cache.videos.append(request.video.id)
+                            cache.capaDispo -= request.video.size
+                            if not cache.used:
+                                cache.used = True
+                                caches_used.append(cache.id)
+                                caches_free = True
+                                #print("cache", cache.id, "is storing video", request.video.id)
+                            break
         #endpoint.requests.sort(key=lambda r: r.times*endpoint.latency/r.video.size)
         #endpoint.caches.sort(key=lambda c: c[1])
         #request = endpoint.requests[1]
