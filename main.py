@@ -96,13 +96,13 @@ if __name__ == '__main__':
     line = input_file.pop(0)
     # Request i
     for i in range(nbRequest):
-        id_video, id_endpoint, number_requests = [int(i) for  i in line.split(' ')]
+        id_video, id_endpoint, number_requests = [int(i) for i in line.split(' ')]
         request = Request(times=number_requests, video=videos[id_video], endpoint=endpoints[id_endpoint])
         endpoints[id_endpoint].requests.append(request)
 
     caches_used = []
     for endpoint in endpoints:
-        endpoint.requests.sort(key=lambda r: r.times)
+        endpoint.requests.sort(key=lambda r: r.times*endpoint.latency/r.video.size)
         endpoint.caches.sort(key=lambda c: c[1])
         request = endpoint.requests[1]
         for cache in endpoint.caches:
