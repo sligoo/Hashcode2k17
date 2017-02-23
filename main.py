@@ -14,14 +14,15 @@ class Cache(object):
         self.capaMax = capaMax
         self.capaDispo = capaMax
         self.endPoints = endPoints
-        self.videos = videos
+        self.videos = []
         self.used = False
 
     def __str__(self):
         s = []
-        s.append(str(self.id))
-        s.append(str(v) for v in self.videos)
-        return " ".join(s)
+        s.append(self.id)
+        s += self.videos
+        print(s)
+        return " ".join(str(i) for i in s)
 
 
 class EndPoint(object):
@@ -49,7 +50,7 @@ class Video(object):
 
 class Request(object):
     def __init__(self, times, video, endpoint):
-        self.time = times
+        self.times = times
         self.video = video
         self.endpoint = endpoint
 
@@ -69,22 +70,26 @@ if __name__ == '__main__':
     endpoints = [None for i in range(nbEndPoints)]  # type: List(Endpoint)
     caches = [None for i in range(nbCache)]  # type: List(Cache)
     requests = [None for i in range(nbRequest)]  # type: List(Request)
+    print(caches)
 
     line = input_file.pop(0)
     video_sizes = line.split(' ')
     for i in range(nbVideos):
         v = Video(id=i, size=int(video_sizes[i]))
-        videos.append(v)
+        videos[i] = v
+    print("videos:", videos)
 
     # Endpoint i
     for i in range(nbEndPoints):
+        print("endpoint", i)
         line = input_file.pop(0)
         latency, nb_caches_endpoint = (int(i) for i in line.split(' '))
         if not endpoints[i]:
-            endpoints[i] = EndPoint(id=i, latency=latency, caches=[None for _ in range(nb_caches_endpoint)], requests=[])
+            endpoints[i] = EndPoint(id=i, latency=latency, caches={}, requests=[])
 
         # Cache j
         for j in range(nb_caches_endpoint):
+            print("cache", j, "in endpoint", i)
             line = input_file.pop(0)
             cache_id, latency = (int(i) for i in line.split(' '))
             print("cache id:", cache_id)
@@ -93,29 +98,45 @@ if __name__ == '__main__':
                 caches[cache_id].capaDispo = capaCache
             endpoints[i].caches[cache_id] = latency
 
-    line = input_file.pop(0)
     # Request i
     for i in range(nbRequest):
+        line = input_file.pop(0)
         id_video, id_endpoint, number_requests = [int(i) for  i in line.split(' ')]
         request = Request(times=number_requests, video=videos[id_video], endpoint=endpoints[id_endpoint])
+        print("request", i, ":", "endpoint", id_endpoint)
         endpoints[id_endpoint].requests.append(request)
+
+
+
+
+
 
     caches_used = []
     for endpoint in endpoints:
+        print("endpoint", endpoint.id)
         endpoint.requests.sort(key=lambda r: r.times)
-        endpoint.caches.sort(key=lambda c: c[1])
-        request = endpoint.requests[1]
-        for cache in endpoint.caches:
-            if request.video not in cache.videos:
-                if cache.capaDispo > request.video.size:
-                    cache.videos.append(request.video.id)
-                    cache.capaDispo -= request.video.size
-                    if not cache.used:
-                        cache.used = true
-                        caches_used.append(cache.id)
-                    break
+        sorted_caches = []
+        for cache_id in endpoint.caches.keys():
+            sorted_caches.append((cache_id, endpoint.caches[cache_id]))
+        sorted_caches.sort(key=lambda couple: couple[1])
+        if endpoint.requests != []:
+            print("endpoint has requests")
+            request = endpoint.requests[0]
+            for cache_id in endpoint.caches.keys():
+                cache = caches[cache_id]
+                print("cache", cache_id)
+                if request.video.id not in cache.videos:
+                    print("video not yet in cache")
+                    if cache.capaDispo > request.video.size:
+                        cache.videos.append(request.video.id)
+                        cache.capaDispo -= request.video.size
+                        if not cache.used:
+                            cache.used = True
+                            caches_used.append(cache.id)
+                            print("cache", cache.id, "is storing video", request.video.id)
+                        break
 
     with open("output.txt", 'w') as out_file:
-        out_file.write(str(caches_used.size) + "\n")
+        out_file.write(str(len(caches_used)) + "\n")
         for cache_id in caches_used:
-            out_file.write(str(caches[cache_id]))
+            out_file.write(str(caches[cache_id]) +"\n")
