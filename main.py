@@ -101,7 +101,7 @@ if __name__ == '__main__':
     # Request i
     for i in range(nbRequest):
         line = input_file.pop(0)
-        id_video, id_endpoint, number_requests = [int(i) for  i in line.split(' ')]
+        id_video, id_endpoint, number_requests = [int(i) for i in line.split(' ')]
         request = Request(times=number_requests, video=videos[id_video], endpoint=endpoints[id_endpoint])
         print("request", i, ":", "endpoint", id_endpoint)
         endpoints[id_endpoint].requests.append(request)
@@ -135,6 +135,18 @@ if __name__ == '__main__':
                             caches_used.append(cache.id)
                             print("cache", cache.id, "is storing video", request.video.id)
                         break
+        #endpoint.requests.sort(key=lambda r: r.times*endpoint.latency/r.video.size)
+        #endpoint.caches.sort(key=lambda c: c[1])
+        #request = endpoint.requests[1]
+        #for cache in endpoint.caches:
+        #    if request.video not in cache.videos:
+        #        if cache.capaDispo > request.video.size:
+        #            cache.videos.append(request.video.id)
+        #            cache.capaDispo -= request.video.size
+        #            if not cache.used:
+        #                cache.used = true
+        #                caches_used.append(cache.id)
+        #            break
 
     with open("output.txt", 'w') as out_file:
         out_file.write(str(len(caches_used)) + "\n")
