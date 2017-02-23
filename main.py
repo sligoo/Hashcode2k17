@@ -15,11 +15,11 @@ def endpoint_score(endpoint):
     return score
 
 class Cache(object):
-    def __init__(self, id, capaMax, capaDispo, endPoint, videos):
+    def __init__(self, id, capaMax, endPoints, videos):
         self.id = id
         self.capaMax = capaMax
-        self.capaDispo = capaDispo
-        self.endPoint = endPoint
+        self.capaDispo = capaMax
+        self.endPoints = endPoints
         self.videos = videos
 
 
