@@ -17,17 +17,17 @@ class Cache(object):
 class EndPoint(object):
     def __init__(self, id, requests, caches, latency):
         self.id = id
-        self.capaDispo = requests
-        self.endPoint = latency
+        self.requests = requests
+        self.latency = latency
         self.caches = caches
 
-    def score(endpoint):
+    def score(self):
         score = 0
 
-        for request in endpoint.requests:
-            for cache in endpoint.caches:
+        for request in self.requests:
+            for cache in self.caches:
                 if request.video in cache.videos:
-                    score += calculate_score(endpoint.latency, endpoint.caches[cache.id])
+                    score += calculate_score(self.latency, self.caches[cache.id])
 
         return score
 
