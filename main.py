@@ -12,10 +12,11 @@ class Cache(object):
 
 
 class EndPoint(object):
-    def __init__(self, id, requests, latency):
+    def __init__(self, id, requests, caches, latency):
         self.id = id
         self.capaDispo = requests
         self.endPoint = latency
+        self.caches = caches
 
 
 class Video(object):
